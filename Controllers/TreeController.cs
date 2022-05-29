@@ -27,17 +27,17 @@ namespace TreeTest_MVC_Core.Controllers
 
             using (IDbConnection db = new SqlConnection("Server=(localdb)\\mssqllocaldb;Database=Phisicon;Trusted_Connection=True;"))
             {
-                List<string> subject = 
-                    db.Query<string>(@"
-                                select  
-                                    distinct Subject
-                                from 
-                                    Courses"
-                      ).ToList();
+                List<string> subject = db.Query<string>(@"select distinct Subject from Courses").ToList();
+                List<string> genre = db.Query<string>(@"select distinct Genre from Courses").ToList();
+                List<string> grade = db.Query<string>(@"select distinct Grade from Courses").ToList();
 
                 subject.Insert(0, "");
+                genre.Insert(0, "");
+                grade.Insert(0, "0");
 
                 ViewBag.Subject = new SelectList(subject);
+                ViewBag.Genre = new SelectList(genre);
+                ViewBag.Grade = new SelectList(grade);
             }
 
             return View();
