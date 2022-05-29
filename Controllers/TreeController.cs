@@ -26,7 +26,7 @@ namespace TreeTest_MVC_Core.Controllers
             return View();
         }
 
-        public JsonResult GetNodesJsTree(int storage = 0)
+        public async Task<JsonResult> GetNodesJsTree(int storage = 0)
         {
 
             List<TreeViewData> treeviewdataList = new List<TreeViewData>();
@@ -34,18 +34,50 @@ namespace TreeTest_MVC_Core.Controllers
             //using (IDbConnection db = new SqlConnection("Server=.\\SQLEXPRESS;Database=Phisicon;Trusted_Connection=True;TrustServerCertificate=True"))
             using (IDbConnection db = new SqlConnection("Server=(localdb)\\mssqllocaldb;Database=Phisicon;Trusted_Connection=True;"))
             {
-                treeviewdataList 
-                    = db.Query<TreeViewData>(@"select  Id, Title as text, '#' as parent from Courses order by Title").ToList();
+                treeviewdataList
+                   .AddRange(
+                      await db.QueryAsync<TreeViewData>(@"
+                                select  
+                                    Id, 
+                                    Title as text, 
+                                    '#' as parent 
+                                from 
+                                    Courses 
+                                where 
+                                    Grade = case when @Grade = 0 then Grade else @Grade end
+                                  and 
+                                    Subject = case when @Subject = '' then Subject else @Subject end
+                                  and 
+                                    Genre = case when @Genre = '' then Genre else @Genre end
+                                order by Title",
+                                new { Grade = 0, Subject = "География", Genre = "" }
+                      )
+                   );
 
                 treeviewdataList
                     .AddRange(
-                        db.Query<TreeViewData>(@"select Id, Num + ' ' + Title as text,
-                                                        case
-                                                            when isNull(ParentId, 0) = 0
-                                                            then cast(CourseId as nvarchar)
-                                                            else cast(ParentId as nvarchar)
-                                                        end as parent
-                                                        from Modules order by [Order]").ToList()
+                        await db.QueryAsync<TreeViewData>(@"
+                                select 
+	                                m.Id, 
+                                    Num + ' ' + m.Title as text,
+                                    case
+                                    when isNull(ParentId, 0) = 0
+                                    then cast(CourseId as nvarchar)
+                                    else cast(ParentId as nvarchar)
+                                    end as parent 
+                                from 
+                                    Modules m
+                                join 
+                                    Courses c on m.CourseId = c.Id
+                                where 
+                                    Grade = case when @Grade = 0 then Grade else @Grade end
+                                  and 
+                                    Subject = case when @Subject = '' then Subject else @Subject end
+                                  and 
+                                    Genre = case when @Genre = '' then Genre else @Genre end
+                                order by [Order]",
+                                new { Grade = 0, Subject = "География", Genre = "" }
+                        )
                     );
             }
 
