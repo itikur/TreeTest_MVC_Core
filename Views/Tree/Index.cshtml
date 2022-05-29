@@ -2,6 +2,9 @@
     ViewData["Title"] = "Tree View";
 }
 
+<input id="Grade" type="number" value="9" />
+
+<select id="Subject" asp-items="ViewBag.Subject"> </select>
 
 <div id="treePlaces">
 </div>
@@ -10,8 +13,12 @@
 
 <script>
 
-    $(function () {
+    $('#Subject').change(function () {
 
+        console.log($('#Subject').val());
+    });
+
+    $(function () {
 
         $('#treePlaces').jstree({
             'core': {
@@ -21,7 +28,10 @@
                 },
 
                 'data': {
-                    "url": "/Tree/GetNodesJsTree/?storage=0"
+                    "url": "/Tree/GetNodesJsTree/?"
+                        + "grade=" + $("#Grade").val()
+                        + "&subject=" + $("#Subject").val()
+                        
                 },
 
                 "multiple": true
@@ -42,10 +52,10 @@
             //"plugins": ["wholerow", "checkbox", "search"],
             //"plugins": ["wholerow", "search"],
 
-            "search": {
-                "case_sensitive": false,
-                "show_only_matches": true
-            }
+            //"search": {
+            //    "case_sensitive": false,
+            //    "show_only_matches": true
+            //}
         })
 
         //// Развернуть дочерние узлы (при выборе node)

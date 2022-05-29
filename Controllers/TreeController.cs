@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using System;
@@ -23,10 +24,26 @@ namespace TreeTest_MVC_Core.Controllers
 
         public IActionResult Index()
         {
+
+            using (IDbConnection db = new SqlConnection("Server=(localdb)\\mssqllocaldb;Database=Phisicon;Trusted_Connection=True;"))
+            {
+                List<string> subject = 
+                    db.Query<string>(@"
+                                select  
+                                    distinct Subject
+                                from 
+                                    Courses"
+                      ).ToList();
+
+                subject.Insert(0, "");
+
+                ViewBag.Subject = new SelectList(subject);
+            }
+
             return View();
         }
 
-        public async Task<JsonResult> GetNodesJsTree(int storage = 0)
+        public async Task<JsonResult> GetNodesJsTree(int grade = 0, string subject = "")
         {
 
             List<TreeViewData> treeviewdataList = new List<TreeViewData>();
@@ -50,7 +67,7 @@ namespace TreeTest_MVC_Core.Controllers
                                   and 
                                     Genre = case when @Genre = '' then Genre else @Genre end
                                 order by Title",
-                                new { Grade = 0, Subject = "География", Genre = "" }
+                                new { Grade = grade, Subject = "География", Genre = "" }
                       )
                    );
 
@@ -76,7 +93,7 @@ namespace TreeTest_MVC_Core.Controllers
                                   and 
                                     Genre = case when @Genre = '' then Genre else @Genre end
                                 order by [Order]",
-                                new { Grade = 0, Subject = "География", Genre = "" }
+                                new { Grade = grade, Subject = "География", Genre = "" }
                         )
                     );
             }
