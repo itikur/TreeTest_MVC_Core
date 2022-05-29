@@ -4,141 +4,34 @@
 
 @*<input id="Grade" type="number" value="9" />*@
 
-<select id="Subject" asp-items="ViewBag.Subject"> </select>
-<select id="Grade" asp-items="ViewBag.Grade"> </select>
-<select id="Genre" asp-items="ViewBag.Genre"> </select>
+<select id="Subject" asp-items="ViewBag.Subject" class="filterCourses"> </select>
+<select id="Grade" asp-items="ViewBag.Grade"  class="filterCourses"> </select>
+<select id="Genre" asp-items="ViewBag.Genre"  class="filterCourses"> </select>
 
-<div id="treePlaces">
+<div id="treeElem">
 </div>
 
 <script src="~/lib/jstree/dist/jstree.min.js"></script>
 
 <script>
 
-    $('#Subject').change(function () {
 
-        console.log($('#Subject').val());
+    $('.filterCourses').change(function () {
+
+        $('#treeElem').jstree(true).settings.core.data.url = "/Tree/GetNodesJsTree/?grade=" + $("#Grade").val() + "&subject=" + $("#Subject").val() + "&genre=" + $("#Genre").val();
+        $('#treeElem').jstree(true).refresh();
     });
 
     $(function () {
 
-        $('#treePlaces').jstree({
+        $('#treeElem').jstree({ //------------------------ jstree 
             'core': {
-                'themes': {
-                    "icons": false,
-                    "stripes": false
-                },
-
                 'data': {
-                    "url": "/Tree/GetNodesJsTree/?"
-                        + "grade=" + $("#Grade").val()
-                        + "&subject=" + $("#Subject").val()
-                        
+                    "url": "/Tree/GetNodesJsTree/?grade=" + $("#Grade").val() + "&subject=" + $("#Subject").val() + "&genre=" + $("#Genre").val()
                 },
-
-                "multiple": true
-
-                //"expand_selected_onload": true,
-                //"responsive": true
             },
-
-            //'check_callback': true,
-            //'data': arrayCollection,
-
-            //"checkbox": {
-            //    "keep_selected_style": true,
-            //    three_state: false,
-            //    cascade: 'no'
-            //},
-
-            //"plugins": ["wholerow", "checkbox", "search"],
-            //"plugins": ["wholerow", "search"],
-
-            //"search": {
-            //    "case_sensitive": false,
-            //    "show_only_matches": true
-            //}
         })
-
-        //// Развернуть дочерние узлы (при выборе node)
-        //.bind("open_node.jstree", function (event, data) {
-        //    //console.log(data.node.children);
-
-        //    //$(this).jstree("open_node", $("#" + data.node.children));
-
-        //    $(".alert").hide(); // скрываем сообщения TempData["warning"], TempData["success"]
-        //})
-
-        //// Expanded jstree
-        //.bind("loaded.jstree", function (event, data) {
-        //    //$(this).jstree("open_all");
-        //})
-
-        //// On Changed "treePlaces"
-        //.bind("changed.jstree", function (evt, data) {
-
-        //    if ($.isNumeric(data.selected[0])) { // если число
-
-        //        //console.log(data.selected);
-
-        //        if (gettypepallet() == 1) {  // если паллета 1.2 м (us)
-
-        //            dataselected = data.selected[0];
-
-        //            $.getJSON('/Tree/GetIsFreeNextPlace/?id=' + data.node.id, function (data, evt) {
-
-        //                if (data == false) {
-        //                    alert("Место не подходит для размещения паллет 1,2 м");
-        //                    $('#treePlaces').jstree("uncheck_node", $("#" + dataselected));
-        //                    $('#placesid').val("");
-        //                }
-        //            });
-        //        }
-        //        $('#placesid').val(data.selected);
-        //    }
-        //    else {
-
-        //        $(this).jstree("uncheck_node", $("#" + data.selected[0]));
-        //    }
-
-        //})
-
-        //.bind("click.jstree", function (evt, data) {
-        //    //var nodeID = data.selected; // Здесь нет data.selected
-        //})
     });
 
 </script>
 
-
-@*<script>
-
-        // Поиск...
-        $(document).ready(function () {
-            $(".search-input").keyup(function () {
-                $('#treePlaces').jstree('search', $(this).val());
-            });
-        });
-
-    </script>
-
-
-    <script>
-
-        // Get selected radio button
-        function gettypepallet() {
-            return $('input[name=typepallet]:checked').val();
-        }
-    </script>
-
-    <script>
-
-        // Сохранение данных...
-        $('#btSave').click(function () {
-            var href = '/Tree/SavePlacePallet/?orgid=' + $('#OrgID').val() + '&placesid=' + $('#placesid').val() + '&pallettype=' + gettypepallet();
-            if (href) {
-                location.href = href;
-            }
-        });
-
-    </script>*@

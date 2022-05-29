@@ -43,7 +43,7 @@ namespace TreeTest_MVC_Core.Controllers
             return View();
         }
 
-        public async Task<JsonResult> GetNodesJsTree(int grade = 0, string subject = "")
+        public async Task<JsonResult> GetNodesJsTree(int grade = 0, string subject = "", string genre = "")
         {
 
             List<TreeViewData> treeviewdataList = new List<TreeViewData>();
@@ -63,11 +63,11 @@ namespace TreeTest_MVC_Core.Controllers
                                 where 
                                     Grade = case when @Grade = 0 then Grade else @Grade end
                                   and 
-                                    Subject = case when @Subject = '' then Subject else @Subject end
+                                    Subject = case when isNull(@Subject, '') = '' then Subject else @Subject end
                                   and 
-                                    Genre = case when @Genre = '' then Genre else @Genre end
+                                    Genre = case when isNull(@Genre, '') = '' then Genre else @Genre end
                                 order by Title",
-                                new { Grade = grade, Subject = "География", Genre = "" }
+                                new { Grade = grade, Subject = subject, Genre = genre }
                       )
                    );
 
@@ -89,11 +89,11 @@ namespace TreeTest_MVC_Core.Controllers
                                 where 
                                     Grade = case when @Grade = 0 then Grade else @Grade end
                                   and 
-                                    Subject = case when @Subject = '' then Subject else @Subject end
+                                    Subject = case when  isNull(@Subject, '') = '' then Subject else @Subject end
                                   and 
-                                    Genre = case when @Genre = '' then Genre else @Genre end
+                                    Genre = case when isNull(@Genre, '') = '' then Genre else @Genre end
                                 order by [Order]",
-                                new { Grade = grade, Subject = "География", Genre = "" }
+                                new { Grade = grade, Subject = subject, Genre = genre }
                         )
                     );
             }
