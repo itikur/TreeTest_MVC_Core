@@ -33,7 +33,7 @@ namespace TreeTest_MVC_Core.Controllers
 
                 subject.Insert(0, "");
                 genre.Insert(0, "");
-                grade.Insert(0, "0");
+                grade.Insert(0, "");
 
                 ViewBag.Subject = new SelectList(subject);
                 ViewBag.Genre = new SelectList(genre);
@@ -43,12 +43,12 @@ namespace TreeTest_MVC_Core.Controllers
             return View();
         }
 
-        public async Task<JsonResult> GetNodesJsTree(int grade = 0, string subject = "", string genre = "")
+        public async Task<JsonResult> GetNodesJsTree(int grade, string subject, string genre)
         {
 
             List<TreeViewData> treeviewdataList = new List<TreeViewData>();
 
-            //using (IDbConnection db = new SqlConnection("Server=.\\SQLEXPRESS;Database=Phisicon;Trusted_Connection=True;TrustServerCertificate=True"))
+
             using (IDbConnection db = new SqlConnection("Server=(localdb)\\mssqllocaldb;Database=Phisicon;Trusted_Connection=True;"))
             {
                 treeviewdataList
@@ -63,9 +63,9 @@ namespace TreeTest_MVC_Core.Controllers
                                 where 
                                     Grade = case when @Grade = 0 then Grade else @Grade end
                                   and 
-                                    Subject = case when isNull(@Subject, '') = '' then Subject else @Subject end
+                                    Subject = case when @Subject is NULL then Subject else @Subject end
                                   and 
-                                    Genre = case when isNull(@Genre, '') = '' then Genre else @Genre end
+                                    Genre = case when @Genre is NULL then Genre else @Genre end
                                 order by Title",
                                 new { Grade = grade, Subject = subject, Genre = genre }
                       )
@@ -89,9 +89,9 @@ namespace TreeTest_MVC_Core.Controllers
                                 where 
                                     Grade = case when @Grade = 0 then Grade else @Grade end
                                   and 
-                                    Subject = case when  isNull(@Subject, '') = '' then Subject else @Subject end
+                                    Subject = case when @Subject is NULL then Subject else @Subject end
                                   and 
-                                    Genre = case when isNull(@Genre, '') = '' then Genre else @Genre end
+                                    Genre = case when @Genre is NULL then Genre else @Genre end
                                 order by [Order]",
                                 new { Grade = grade, Subject = subject, Genre = genre }
                         )
